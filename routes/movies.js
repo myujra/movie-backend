@@ -32,4 +32,20 @@ router.get("/favorites", async (req, res) => {
   }
 });
 
+router.delete("/favorites/:movieId", async (req, res) => {
+  try {
+    const userId = req.userId;
+    const movieId = req.params.movieId;
+    const query = "DELETE FROM movies WHERE id = $1 AND user_id = $2";
+    const result = await db.query(query, [movieId, userId]);
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "Favorite movie not found" });
+    }
+    res.status(204).send();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 module.exports = router;
